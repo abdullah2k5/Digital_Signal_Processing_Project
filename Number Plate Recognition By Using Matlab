@@ -1,0 +1,124 @@
+function premium_car_recognition_system()
+    % --- DATABASE SETUP (10 Slots: 8 Filled, 2 Placeholder) ---
+    plates = {'BDM-870', 'BCR-276', 'CAU-830', 'BEG-521', 'BPH-832', ...   
+              'AAV-540', 'BBU-414', 'AJS-587', 'TEMP-09', 'AAA-124'};
+    
+    data = struct(...
+        'Owner', {'Mustafa Khan', 'Arham Siddiqui', 'Rayyan Godil', 'Abdullah Alam', 'Muhammad Sami', ...
+                  'Maaz Khan', 'Zeeshan Malik', 'Hassan Raza', 'EMPTY SLOT', 'Ali Khan'}, ...
+        'Color', {'Gun Metallic', 'Metallic Grey', 'White', 'Black', 'Royal Blue', ...
+                  'UNKNOWN', 'Pearl White', 'Beige', 'ADD COLOR', 'Black'}, ...
+        'EngineNo', {'E-55421', 'E-99203', 'E-44512', 'E-88273', 'E-11209', ...
+                     'NOT FOUND', 'E-77123', 'E-44102', '00000', 'E-11569'}, ...
+        'ChassisNo', {'C-2210', 'C-8821', 'C-7731', 'C-6641', 'C-5551', ...
+                      'NOT FOUND', 'C-1092', 'C-4412', '00000', 'C-9765'}, ...
+        'TaxStatus', {'Paid', 'Paid', 'Unpaid', 'Paid', 'Expired', ...
+                      'UNKNOWN', 'Paid', 'Paid', 'PENDING', 'PENDING'}, ...
+        'TaxYear', {'2026', '2026', '2023', '2025', '2022', ...
+                    'N/A', '2027', '2026', '2020', '2017'}, ...
+        'Make', {'Toyota', 'Suzuki', 'Suzuki', 'Suzuki', 'KIA', ...
+                 'UNKNOWN', 'Honda', 'Toyota', 'MAKE', 'Toyota'}, ...
+        'Model', {'Corolla', 'Mehran', 'Alto', 'Swift', 'Sportage', ...
+                  'UNKNOWN', 'Civic', 'Yaris', 'MODEL', 'Land Crusier'}, ...
+        'Company', {'Indus Motors', 'Suzuki Pak', 'Suzuki Pak', 'Hyundai Pak', 'Lucky Motors', ...
+                    'UNKNOWN', 'Honda Atlas', 'Indus Motors', 'COMPANY', 'Toyota Motors'}, ...
+        'Capacity', {'5', '5', '4', '5', '5', ...
+                     '?', '5', '5', '?', '7'}, ...
+        'BodyType', {'Sedan', 'Hatchback', 'Hatchback', 'Hatchback', 'SUV', ...
+                     'UNKNOWN', 'Sedan', 'Sedan', 'TYPE', '5 Door SUV'}, ...
+        'HorsePower', {'1300cc', '1000cc', '660cc', '1200cc', '2000cc', ...
+                       'UNKNOWN', '1500cc', '1300cc', '000cc', '2500cc'}, ...
+        'Class', {'M1', 'M1', 'A1', 'M1', 'SUV', ...
+                  'UNKNOWN', 'M1', 'M1', 'CLASS', 'SUV'}, ...
+        'CPLC', {'Clear', 'Clear', 'Clear', 'Clear', 'Clear', ...
+                 'DATA MISSING', 'Clear', 'Clear', 'Clear', 'STOLEN - FIR REPORTED'} ...
+    );
+
+    % --- DESIGN THEME (Cyber-Tech Dark Mode) ---
+    mainBg = [0.05 0.07 0.10];    
+    panelBg = [0.10 0.12 0.18];   
+    accentCyan = [0.00 1.00 0.80]; 
+    textGrey = [0.75 0.75 0.75];
+
+    fig = uifigure('Name', 'PREMIUM NEURAL SCANNER V4.0', 'Color', mainBg, 'Position', [100 100 1050 720]);
+
+    % Header Panel
+    header = uipanel(fig, 'BackgroundColor', [0.02 0.03 0.05], 'Position', [0 640 1050 80], 'BorderType', 'none');
+    uilabel(header, 'Text', 'SYSTEM: ADVANCED PLATE DECRYPTION', 'FontSize', 32, 'FontWeight', 'bold', 'Position', [40 25 700 45], 'FontColor', [1 1 1]);
+    
+    % LEFT Side: Optical Scanner
+    leftPanel = uipanel(fig, 'Title', 'OPTICAL FEED', 'Position', [40 40 460 580], 'BackgroundColor', panelBg, 'ForegroundColor', accentCyan, 'FontWeight', 'bold');
+    ax = uiaxes(leftPanel, 'Position', [20 300 420 250], 'BackgroundColor', [0 0 0], 'XColor', 'none', 'YColor', 'none');
+    uilabel(leftPanel, 'Text', 'INPUT REGISTRATION NUMBER:', 'Position', [30 230 300 22], 'FontColor', [1 1 1], 'FontWeight', 'bold');
+    searchField = uieditfield(leftPanel, 'text', 'Position', [30 170 400 50], 'BackgroundColor', [0.15 0.20 0.30], 'FontColor', [1 1 1], 'FontSize', 24, 'HorizontalAlignment', 'center');
+    btn = uibutton(leftPanel, 'Text', 'INITIALIZE SCAN', 'Position', [30 60 400 85], 'BackgroundColor', accentCyan, 'FontColor', [0 0 0], 'FontWeight', 'bold', 'FontSize', 22);
+
+    % RIGHT Side: Decrypted Data Display
+    rightPanel = uipanel(fig, 'Title', 'SECURE DATASET', 'Position', [530 40 480 580], 'BackgroundColor', panelBg, 'ForegroundColor', accentCyan, 'FontWeight', 'bold');
+    labels = {'Full Owner Name', 'Exterior Color', 'Engine Number', 'Chassis Number', 'Tax Status', 'Tax Paid Until', ...
+              'Vehicle Make', 'Vehicle Model', 'Manufacturer', 'Capacity', 'Body Type', 'Power', 'Class', 'CPLC Status'};
+    displays = cell(1, length(labels));
+
+    for i = 1:length(labels)
+        yPos = 530 - (i*36);
+        uipanel(rightPanel, 'Position', [20 yPos-3 440 1], 'BackgroundColor', [0.2 0.25 0.35], 'BorderType', 'none');
+        uilabel(rightPanel, 'Text', labels{i}, 'Position', [25 yPos 180 22], 'FontColor', textGrey, 'FontSize', 11);
+        displays{i} = uilabel(rightPanel, 'Text', '---', 'Position', [210 yPos 250 22], 'FontColor', [1 1 1], 'FontSize', 12, 'FontWeight', 'bold');
+    end
+
+    btn.ButtonPushedFcn = @(btn, event) runRecognition(btn, searchField, plates, data, displays, ax, fig);
+end
+
+function runRecognition(btn, searchField, plates, data, displays, ax, fig)
+    btn.Text = 'SCANNING...';
+    btn.BackgroundColor = [1 1 1];
+    pause(0.6);
+    
+    input = upper(strtrim(searchField.Value));
+    idx = find(strcmp(plates, input));
+
+    if isempty(idx)
+        uialert(fig, 'ACCESS DENIED: Plate not found in regional registry.', 'Registry Error');
+        btn.Text = 'INITIALIZE SCAN';
+        btn.BackgroundColor = [0.00 1.00 0.80];
+    else
+        res = data(idx);
+        vals = {res.Owner, res.Color, res.EngineNo, res.ChassisNo, res.TaxStatus, res.TaxYear, ...
+                res.Make, res.Model, res.Company, res.Capacity, res.BodyType, res.HorsePower, res.Class, res.CPLC};
+        
+        for k = 1:length(displays)
+            displays{k}.Text = upper(vals{k});
+        end
+        
+        % STOLEN ALERT LOGIC (Assigned to Plate 10)
+        if contains(upper(res.CPLC), 'STOLEN')
+            displays{14}.FontColor = [1 0 0]; 
+            uialert(fig, 'CRITICAL ALERT: This vehicle is reported STOLEN. FIR has been lodged.', 'SECURITY ALERT', 'Icon', 'error');
+        else
+            displays{14}.FontColor = [1 1 1];
+        end
+
+        % TAX COLOR LOGIC
+        if strcmpi(res.TaxStatus, 'Paid')
+            displays{5}.FontColor = [0 1 0]; 
+        else
+            displays{5}.FontColor = [1 0.2 0.2];
+        end
+
+        % Display Image Logic
+        try
+            imgName = sprintf('plate%d.jpg', idx);
+            img = imread(imgName);
+            imshow(img, 'Parent', ax);
+            title(ax, ['SCAN SUCCESS: ' input], 'Color', [0 1 0.8]);
+        catch
+            cla(ax);
+            text(ax, 0.5, 0.5, 'NO SOURCE IMAGE', 'Color', [1 0 0], 'HorizontalAlignment', 'center');
+        end
+        
+        btn.Text = 'SCAN COMPLETE';
+        pause(1.0);
+        btn.Text = 'INITIALIZE SCAN';
+        btn.BackgroundColor = [0.00 1.00 0.80];
+    end
+end
